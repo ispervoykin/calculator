@@ -62,7 +62,9 @@ cButton.addEventListener('click', () => {
 
 const decimalPointButton = document.querySelector('#decimal-point');
 decimalPointButton.addEventListener('click', () => {
-    currValue.textContent += '.';
+    if (currValue.textContent && !currValue.textContent.includes('.')) {
+        currValue.textContent += '.';   
+    }
 });
 
 const operatorButtons = document.querySelectorAll('.operator');
@@ -84,5 +86,7 @@ resultButton.addEventListener('click', processResult);
 
 const sqrtButton = document.querySelector('#sqrt');
 sqrtButton.addEventListener('click', () => {
-    currValue.textContent = Math.sqrt(currValue.textContent);
+    if (currValue.textContent) {
+        currValue.textContent = Math.sqrt(currValue.textContent)  
+    }
 });
