@@ -1,0 +1,47 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.calculator {
+    display: flex;
+    justify-content: center;
+    flex-flow: column wrap;
+    margin-top: 150px;
+    max-width: 601px;
+    border: 2px solid black;
+    padding: 50px 30px;
+}
+
+.display {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 40px;
+    border: 2px solid black;
+    width: 601px;
+    height: 85px;
+    margin-bottom: 50px;
+}
+
+.keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 67px;
+}
+
+.keyboard-button {
+    font-size: 30px;
+    width: 100px;
+    height: 50px;
+}
+
+#result {
+    width: 267px;
+}
+
+.previous-value {
+    font-size: 20px;
+}
