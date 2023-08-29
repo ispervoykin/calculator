@@ -4,6 +4,7 @@ function countDecimals(value) {
 }
 
 function processResult() {
+    lastOperator = '=';
     if (currValue.textContent && prevValue.textContent) {
         let prevValueAsNumber = parseFloat(prevValue.textContent);
         let currValueAsNumber = parseFloat(currValue.textContent);
@@ -11,6 +12,9 @@ function processResult() {
         switch (currOperator) {
             case '÷':
                 result = (prevValueAsNumber / currValueAsNumber);
+                if (result == Infinity) {
+                    result = "Can't divide by zero!";
+                }
                 break;
             case '*':
                 result = (prevValueAsNumber * currValueAsNumber);
@@ -22,10 +26,12 @@ function processResult() {
                 result = (prevValueAsNumber + currValueAsNumber);
                 break;
         }
-        if (countDecimals(result) > 3) {
-            result = result.toFixed(3);
-        } else if (countDecimals(result) >= 1) {
-            result = result.toFixed(countDecimals(result));
+        if (typeof(result) === 'number') {
+            if (countDecimals(result) > 3) {
+                result = result.toFixed(3);
+            } else if (countDecimals(result) >= 1) {
+                result = result.toFixed(countDecimals(result));
+            }
         }
         currValue.textContent = result;
         prevValue.textContent = '';
@@ -37,11 +43,16 @@ const currValue = document.querySelector('.current-value');
 const prevValue = document.querySelector('.previous-value');
 
 let currOperator;
+let lastOperator;
 
 const numberButtons = document.querySelectorAll('.numbers');
 
 numberButtons.forEach(button => {
     button.addEventListener('click', () => {
+        if (lastOperator == '=') {
+            currValue.textContent = '';
+            lastOperator = '';
+        }
         if (currValue.textContent.length < 20) {
             currValue.textContent += button.textContent;
         }
@@ -62,7 +73,10 @@ cButton.addEventListener('click', () => {
 
 const decimalPointButton = document.querySelector('#decimal-point');
 decimalPointButton.addEventListener('click', () => {
-    if (currValue.textContent && !currValue.textContent.includes('.')) {
+    if (!currValue.textContent) {
+        currValue.textContent = '0.';
+    }
+    else if (currValue.textContent && !currValue.textContent.includes('.')) {
         currValue.textContent += '.';   
     }
 });
@@ -80,6 +94,14 @@ operatorButtons.forEach(button => {
         }
     });
 });
+
+const minusOperatorButton = document.querySelector('#minus');
+minusOperatorButton.addEventListener('click', () => {
+    if (!currValue.textContent && !prevValue.textContent) {
+        lastOperator = '';
+        currValue.textContent = '-';
+    }
+})
 
 const resultButton = document.querySelector('#result');
 resultButton.addEventListener('click', processResult);
