@@ -42,7 +42,7 @@ const numberButtons = document.querySelectorAll('.numbers');
 
 numberButtons.forEach(button => {
     button.addEventListener('click', () => {
-        if (currValue.textContent.length < 18) {
+        if (currValue.textContent.length < 20) {
             currValue.textContent += button.textContent;
         }
     });
