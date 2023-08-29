@@ -4,13 +4,14 @@ function countDecimals(value) {
 }
 
 function processResult() {
-    lastOperator = '=';
+
+    prevOperator = '=';
     if (currValue.textContent && prevValue.textContent) {
         let prevValueAsNumber = parseFloat(prevValue.textContent);
         let currValueAsNumber = parseFloat(currValue.textContent);
         let result;
         switch (currOperator) {
-            case '÷':
+            case '÷': case '/':
                 result = (prevValueAsNumber / currValueAsNumber);
                 if (result == Infinity) {
                     result = "Can't divide by zero!";
@@ -38,32 +39,111 @@ function processResult() {
     }
 }
 
+function processNumber(number) {
+    if (prevOperator == '=' || currValue.textContent == sqrtOfNegativeMsg) {
+        currValue.textContent = '';
+        prevOperator = '';
+    }
+    if (currValue.textContent.length < 20) {
+        currValue.textContent += number;
+    }
+}
+
+function processOperator(operator) {
+    if (operator == '-' && !currValue.textContent) {
+        prevOperator = '';
+        currValue.textContent = '-';
+    }
+    else if (currValue.textContent) {
+        if (prevValue.textContent) {
+            processResult();
+        }
+        currOperator = operator;
+        prevValue.textContent = currValue.textContent + ' ' + currOperator;
+        currValue.textContent = '';
+    }
+}
+
+function processDecimalPoint() {
+    if (!currValue.textContent) {
+        currValue.textContent = '0.';
+    }
+    else if (currValue.textContent && !currValue.textContent.includes('.')) {
+        currValue.textContent += '.';   
+    }
+}
+
+function processSqrt() {
+    if (currValue.textContent) {
+        if (parseFloat(currValue.textContent) < 0) {
+            currValue.textContent = sqrtOfNegativeMsg;
+        } else {
+            currValue.textContent = Math.sqrt(currValue.textContent)
+        }
+    }
+}
+
+function allClear() {
+    prevValue.textContent = '';
+    currValue.textContent = '';
+    currOperator = '';
+}
+
 const display = document.querySelector('.display');
+document.addEventListener('keydown', (e) => {
+    if (!isNaN(Number(e.key))) {
+        processNumber(e.key);
+    }
+    switch (e.key) {
+        case 'Backspace':
+            currValue.textContent = currValue.textContent.slice(0, -1);
+            break;
+        case '*': case '+': case '-':
+            processOperator(e.key);
+            break;
+        case '/':
+            e.preventDefault();
+            processOperator(e.key);
+            break;
+        case '.':
+            processDecimalPoint();
+            break;
+        case 'a':
+            allClear();
+            break;
+        case 'c':
+            currValue.textContent = '';
+            break;
+        case 'r':
+            processSqrt();
+            break;
+        case 'Enter':
+            e.preventDefault();
+            processResult();
+            break;
+    }
+
+});
+
 const currValue = document.querySelector('.current-value');
 const prevValue = document.querySelector('.previous-value');
 
 let currOperator;
-let lastOperator;
+let prevOperator;
+
+const sqrtOfNegativeMsg = "Can't extract the square root of a negative value";
 
 const numberButtons = document.querySelectorAll('.numbers');
 
 numberButtons.forEach(button => {
     button.addEventListener('click', () => {
-        if (lastOperator == '=') {
-            currValue.textContent = '';
-            lastOperator = '';
-        }
-        if (currValue.textContent.length < 20) {
-            currValue.textContent += button.textContent;
-        }
+        processNumber(button.textContent);
     });
 });
 
 const acButton = document.querySelector('#ac');
 acButton.addEventListener('click', () => {
-    prevValue.textContent = '';
-    currValue.textContent = '';
-    currOperator = '';
+    allClear();
 });
 
 const cButton = document.querySelector('#c');
@@ -73,42 +153,20 @@ cButton.addEventListener('click', () => {
 
 const decimalPointButton = document.querySelector('#decimal-point');
 decimalPointButton.addEventListener('click', () => {
-    if (!currValue.textContent) {
-        currValue.textContent = '0.';
-    }
-    else if (currValue.textContent && !currValue.textContent.includes('.')) {
-        currValue.textContent += '.';   
-    }
+    processDecimalPoint();
 });
 
 const operatorButtons = document.querySelectorAll('.operator');
 operatorButtons.forEach(button => {
     button.addEventListener('click', () => {
-        if (currValue.textContent) {
-            if (prevValue.textContent) {
-                processResult();
-            }
-            currOperator = button.textContent;
-            prevValue.textContent = currValue.textContent + ' ' + currOperator;
-            currValue.textContent = '';
-        }
+        processOperator(button.textContent);
     });
 });
-
-const minusOperatorButton = document.querySelector('#minus');
-minusOperatorButton.addEventListener('click', () => {
-    if (!currValue.textContent && !prevValue.textContent) {
-        lastOperator = '';
-        currValue.textContent = '-';
-    }
-})
 
 const resultButton = document.querySelector('#result');
 resultButton.addEventListener('click', processResult);
 
 const sqrtButton = document.querySelector('#sqrt');
 sqrtButton.addEventListener('click', () => {
-    if (currValue.textContent) {
-        currValue.textContent = Math.sqrt(currValue.textContent)  
-    }
+    processSqrt();
 });
