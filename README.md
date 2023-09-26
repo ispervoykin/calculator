@@ -13,4 +13,4 @@ Hotkey list:
 - Enter : Calculate
 - Backspace : Delete last digit from current number
 
-View it [here](https://ispervoykin.github.io/calculator/).
+View it [here](https://ispervoykin.github.io/odin-calculator/).
